@@ -1,5 +1,34 @@
 #include "get_next_line.h"
 
+void polish_list(t_list **list)
+{
+    t_list *last_node;
+    t_list *clean_node;
+    char *buf;
+    int i;
+    int k;
+
+
+    buf = malloc(BUFFER_SIZE + 1);
+    clean_node = malloc (sizeof(t_list));
+    if (!buf || !clean_node)
+        return ;
+    last_node = find_last_node(*list);
+    i = 0;
+    k = 0;
+    while (last_node->buf[i] && last_node->buf[i] != '\n')
+        ++i;
+    /*
+     maybe our file don't have '\n'-s, only '\0'-s.
+     */
+    while (last_node->buf[i] != '\0' && last_node->buf[++i] != '\0')
+        buf[k++] = last_node->buf[i];
+    buf[k] = '\0';
+    clean_node->buf = buf;
+    clean_node -> next = NULL;
+    deletealloc(list,clean_node, buf);
+}
+
 char *get_line (t_list *list)
 {
     int length;
@@ -21,6 +50,15 @@ void append (t_list **list, char *buf)
     t_list *last_node;
 
     last_node = find_last_node(*list);
+    new_node = malloc (sizeof(t_list));
+    if (!new_node)
+        return ;
+    if (!last_node)
+        *list = new_node;
+    else
+        last_node->next = new_node;
+    new_node->buf = buf;
+    new_node->next = NULL;
 }
 
 void create_list(t_list **list, int fd)
@@ -28,7 +66,7 @@ void create_list(t_list **list, int fd)
     int read_char;
     char *buf;
 
-    while (!found_newline(*list))
+    while (!found_new_line(*list))
     {
         buf = malloc(BUFFER_SIZE + 1);
         if (!buf)
@@ -44,16 +82,35 @@ void create_list(t_list **list, int fd)
     }
 }
 
-char *get_next_line (int fd)
+char *get_next_line(int fd)
 {
-    static t_list *list;
+    static t_list *list = NULL;
     char *next_line;
 
-    list = NULL;
-    if (fd < 0 || BUFFER_SIZE <= 0 || read(fd, &next_line, 0) < 0)
+    next_line = NULL;
+    if (fd < 0 || BUFFER_SIZE <= 0) return (NULL);
+    if (read(fd, &next_line, 0) < 0) {
+        deletealloc(&list, NULL, NULL);
         return (NULL);
+    }
     create_list(&list, fd);
-        if (!list)
-            return (NULL);
+    if (!list) return (NULL);
     next_line = get_line(list);
+    polish_list(&list);
+    return (next_line);
 }
+/*#include <stdio.h>
+
+int main ()
+{
+    int fd;
+    char *line;
+    int lines;
+    lines = 1;
+    fd = open("text.txt", O_RDONLY);
+    while ((line = get_next_line(fd)))
+    {
+        printf("%d next -> %s \n", lines++, line);
+    }
+}
+*/
