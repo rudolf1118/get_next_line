@@ -16,7 +16,7 @@ typedef struct s_list
 } t_list;
 
 void create_list (t_list **list, int fd);
-void append (t_list **list, char *buf);
+void append (t_list **list, char *buf, int fd);
 void polish_list(t_list **list);
 char *get_line(t_list *list);
 void deletealloc(t_list **list, t_list *clean_node, char *buf);

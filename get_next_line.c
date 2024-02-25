@@ -87,7 +87,6 @@ char *get_next_line(int fd)
     static t_list *list = NULL;
     char *next_line;
 
-    next_line = NULL;
     if (fd < 0 || BUFFER_SIZE <= 0) return (NULL);
     if (read(fd, &next_line, 0) < 0) {
         deletealloc(&list, NULL, NULL);

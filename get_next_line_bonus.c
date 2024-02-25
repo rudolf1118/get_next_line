@@ -1,4 +1,4 @@
-#include "get_next_line.h"
+#include "get_next_line_bonus.h"
 
 void polish_list(t_list **list)
 {
@@ -44,17 +44,17 @@ char *get_line (t_list *list)
     return (next_str);
 }
 
-void append (t_list **list, char *buf)
+void append (t_list **list, char *buf, int fd)
 {
     t_list *new_node;
     t_list *last_node;
 
-    last_node = find_last_node(*list);
+    last_node = find_last_node(list[fd]);
     new_node = malloc (sizeof(t_list));
     if (!new_node)
         return ;
     if (!last_node)
-        *list = new_node;
+        list[fd] = new_node;
     else
         last_node->next = new_node;
     new_node->buf = buf;
@@ -78,7 +78,7 @@ void create_list(t_list **list, int fd)
             return ;
         }
         buf[read_char] = '\0';
-        append(list, buf);
+        append(list, buf, fd);
     }
 }
 
@@ -101,7 +101,8 @@ char *get_next_line(int fd)
     polish_list(&list[fd]);
     return (next_line);
 }
-/*#include <stdio.h>
+/*
+#include <stdio.h>
 
 int main ()
 {
@@ -115,4 +116,4 @@ int main ()
         printf("%d next -> %s \n", lines++, line);
     }
 }
-*/
+ */
