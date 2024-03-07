@@ -1,54 +1,65 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   get_next_line_utils.c                              :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: rharutyu <marvin@42.fr>                    +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2024/03/07 19:06:20 by rharutyu          #+#    #+#             */
+/*   Updated: 2024/03/07 19:06:21 by rharutyu         ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
 #include "get_next_line.h"
 
-int found_new_line(t_list *list)
+int	found_new_line(t_list *list)
 {
-    int index;
+	int	index;
 
-    if (!list)
-        return (0);
+	if (!list)
+		return (0);
 	while (list)
 	{
 		index = 0;
-		while (list -> buf[index] && index < BUFFER_SIZE)
+		while (list->buf[index] && index < BUFFER_SIZE)
 		{
-			if (list -> buf[index] == '\n')
+			if (list->buf[index] == '\n')
 				return (1);
-		    ++index;
+			++index;
 		}
-		list = list -> next;
+		list = list->next;
 	}
-    return (0);
+	return (0);
 }
 
-void deletealloc(t_list **list, t_list *clean_node, char *buf)
+void	deletealloc(t_list **list, t_list *clean_node, char *buf)
 {
-     t_list *temp;
+	t_list	*temp;
 
-     if (!(*list))
-         return ;
-     while (*list)
-     {
-         temp = (*list) ->next;
-         free((*list)->buf);
-         free(*list);
-         *list = temp;
-     }
-     *list = NULL;
-     if (clean_node->buf[0])
-         *list = clean_node;
-     else
-     {
-         free(buf);
-         free(clean_node);
-     }
+	if (!(*list))
+		return ;
+	while (*list)
+	{
+		temp = (*list)->next;
+		free((*list)->buf);
+		free(*list);
+		*list = temp;
+	}
+	*list = NULL;
+	if (clean_node->buf[0])
+		*list = clean_node;
+	else
+	{
+		free(buf);
+		free(clean_node);
+	}
 }
 
-
-t_list *find_last_node(t_list *list)
+t_list	*find_last_node(t_list *list)
 {
 	if (!list)
 		return (NULL);
-	while (list -> next)
+	while (list->next)
 		list = list->next;
 	return (list);
 }
@@ -76,7 +87,7 @@ void	copy_str(t_list *list, char *str)
 		}
 		list = list->next;
 	}
-    str[index] = '\0';
+	str[index] = '\0';
 }
 
 int	len_to_new_line(t_list *list)
@@ -98,7 +109,7 @@ int	len_to_new_line(t_list *list)
 				return (len);
 			}
 			++len;
-            ++index;
+			++index;
 		}
 		list = list->next;
 	}
